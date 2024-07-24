@@ -18,13 +18,14 @@ SUMMARY_SHEET = SHEET.worksheet('summary')
 
 expenses = []
 
+
 def addExpense(amount, category):
     """
     Adds an expense to the expenses list and updates the Google Sheet.
     """
     expense = {'amount': amount, 'category': category}
     expenses.append(expense)
-    updateExpenseSheet(category, amount)  # Call the function to update Google Sheets
+    updateExpenseSheet(category, amount) 
     
 def updateExpenseSheet(category, amount):
     """
@@ -229,7 +230,6 @@ if __name__ == "__main__":
             removeExpense()
         
         elif optionSelected == '4':
-            # Call function to list all expenses
             listExpenses()
         
         elif optionSelected == '5':
