@@ -101,8 +101,6 @@ def listExpenses():
                     'category': category
                 })
     
-    # Sort expenses by most recent first
-    expenses_list.sort(key=lambda x: x['amount'], reverse=True)
     
     # Print the last 10 expenses
     print("Last 10 Expenses:")
@@ -110,6 +108,67 @@ def listExpenses():
         print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
         
     print()
+
+def removeExpense():
+    """
+    Removes an expense from the expenses sheet based on user selection.
+    """
+    category_column = {
+        "Rent/Mortgage": "A",
+        "Utilities": "B",
+        "Shopping": "C",
+        "Transport": "D",
+        "Insurance": "E",
+        "Entertainment": "F",
+        "Savings": "G",
+        "Miscellaneous": "H"
+    }
+    
+    expenses_list = []
+
+    # Fetch expenses from each category
+    for category, column in category_column.items():
+        column_index = column_to_index(column)
+        values = EXPENSES_SHEET.col_values(column_index)[1:]  # Skip header
+        
+        for row_index, amount in enumerate(values, start=2):  # Start from row 2
+            if amount.strip():  # Skip empty entries
+                expenses_list.append({
+                    'amount': float(amount),
+                    'category': category,
+                    'row_index': row_index
+                })
+
+    # Check if there are expenses to remove
+    if not expenses_list:
+        print("No expenses to remove.")
+        return
+
+    # Display the expenses to choose from
+    print("Expenses to choose from for removal:")
+    for i, expense in enumerate(expenses_list, start=1):
+        print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
+
+    # Get user input for the expense to remove
+    while True:
+        try:
+            selection = int(input("Select the number of the expense to remove: "))
+            if 1 <= selection <= len(expenses_list):
+                break
+            raise ValueError("Invalid selection.")
+        except ValueError:
+            print("Invalid input. Please enter a number corresponding to the expense.")
+
+    # Remove the selected expense
+    selected_expense = expenses_list[selection - 1]
+    selected_row = selected_expense['row_index']
+    category = selected_expense['category']
+    
+    # Clear the cell for the selected expense
+    column_index_number = column_to_index(category_column[category])
+    EXPENSES_SHEET.update_cell(selected_row, column_index_number, '')  # Clear the cell
+
+    print(f"Removed {selected_expense['category']} - €{selected_expense['amount']:.2f} from the sheet.")
 
 def printMenu():
     """
