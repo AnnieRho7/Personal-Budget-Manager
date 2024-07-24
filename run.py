@@ -185,7 +185,8 @@ def printMenu():
 
 
 if __name__ == "__main__":
-    expenses = []  # Initialize the expense list
+    expenses = []
+    income = []
     
     while True:
         # Prompt the user
