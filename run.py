@@ -70,6 +70,47 @@ def column_to_index(column_letter):
     """
     return ord(column_letter.upper()) - ord('A') + 1
 
+def listExpenses():
+    """
+    Lists the last 10 expenses from the expenses sheet.
+    """
+    # Define the column mapping for categories
+    category_column = {
+        "Rent/Mortgage": "A",
+        "Utilities": "B",
+        "Shopping": "C",
+        "Transport": "D",
+        "Insurance": "E",
+        "Entertainment": "F",
+        "Savings": "G",
+        "Miscellaneous": "H"
+    }
+    
+    expenses_list = []
+    
+    # Fetch data for each category
+    for category, column in category_column.items():
+        column_index = column_to_index(column)
+        values = EXPENSES_SHEET.col_values(column_index)
+        
+        # Exclude the header row and get expenses
+        for amount in values[1:]:
+            if amount.strip():  # Skip empty entries
+                expenses_list.append({
+                    'amount': float(amount),
+                    'category': category
+                })
+    
+    # Sort expenses by most recent first
+    expenses_list.sort(key=lambda x: x['amount'], reverse=True)
+    
+    # Print the last 10 expenses
+    print("Last 10 Expenses:")
+    for i, expense in enumerate(expenses_list[-10:], start=1):
+        print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
+        
+    print()
+
 def printMenu():
     """
     Displays the menu options to the user.
@@ -129,6 +170,7 @@ if __name__ == "__main__":
             removeExpense()
         
         elif optionSelected == '4':
+            # Call function to list all expenses
             listExpenses()
         
         elif optionSelected == '5':
