@@ -63,6 +63,56 @@ def loadExpenses():
     except Exception as e:
         print("Error loading expenses:", e)
 
+def addIncome(amount, category):
+    """
+    Adds an income entry to the income list and updates the Google Sheet.
+    """
+    try:
+        # Ensure amount is a float
+        amount = float(amount)
+
+        # Define the category to column mapping
+        category_column = {
+            "Salary": "A",
+            "Freelance": "B",
+            "Misc": "C"
+        }
+
+        if category not in category_column:
+            print("Invalid category. Please choose from Salary, Freelance, or Misc.")
+            return
+
+        # Update the income list (if needed) or directly update the sheet
+        updateIncomeSheet(category, amount)
+
+    except ValueError:
+        print("Invalid amount. Please enter a numeric value.")
+    except Exception as e:
+        print("Error adding income:", e)
+
+def updateIncomeSheet(category, amount):
+    """
+    Updates the Google Sheets with the new income data.
+    """
+    category_column = {
+        "Salary": "A",
+        "Freelance": "B",
+        "Misc": "C"
+    }
+
+    try:
+        column = category_column[category]
+        column_index = column_to_index(column)
+        existing_values = INCOME_SHEET.col_values(column_index)
+        row_to_update = len(existing_values) + 1
+
+        # Update the cell with the new amount
+        INCOME_SHEET.update_cell(row_to_update, column_index, amount)
+        print(f"Income added to {category}: €{amount:.2f}")
+
+    except Exception as e:
+        print("Error updating income sheet:", e)
+
 def addExpense(amount, category):
     """
     Adds an expense to the expenses list and updates the Google Sheet.
@@ -204,7 +254,7 @@ def printMenu():
     Displays the menu options to the user.
     """
     print('Please choose from one of the following options (1-6)... ')
-    print('1. Add Monthly Income')
+    print('1. Add Income')
     print('2. Add Expense')
     print('3. Remove Expense')
     print('4. List expenses')
@@ -219,7 +269,38 @@ if __name__ == "__main__":
         optionSelected = input('> ')
 
         if optionSelected == '1':
-            print("Add Monthly Income is not implemented yet.")
+                print("How much was this income?")
+                while True:
+                    try:
+                        amountToAdd = input("> ")
+                        float(amountToAdd)  # Check if the input is a valid float number
+                        break
+                    except ValueError:
+                        print("Invalid input. Please enter a valid amount.")
+
+                print("Please choose a category:")
+                print("1. Salary")
+                print("2. Freelance")
+                print("3. Misc")
+
+                category_map = {
+                    "1": "Salary",
+                    "2": "Freelance",
+                    "3": "Misc"
+                }
+
+                while True:
+                    try:
+                        category_choice = input("> ")
+                        if category_choice in category_map:
+                            category = category_map[category_choice]
+                            break
+                        else:
+                            raise ValueError("Invalid input")
+                    except ValueError:
+                        print("Invalid input. Please enter a number between 1 and 3.")
+
+                addIncome(amountToAdd, category)  # Call function to add income to list and update Google Sheets
 
         elif optionSelected == '2':
             print("How much was this expense?")
