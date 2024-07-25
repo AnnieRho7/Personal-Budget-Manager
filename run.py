@@ -34,6 +34,7 @@ except Exception as e:
 
 expenses = []
 
+
 def loadExpenses():
     """
     Loads the existing expenses from the Google Sheets into the expenses list.
@@ -63,6 +64,7 @@ def loadExpenses():
     except Exception as e:
         print("Error loading expenses:", e)
 
+
 def addIncome(amount, category):
     """
     Adds an income entry to the income list and updates the Google Sheet.
@@ -79,16 +81,18 @@ def addIncome(amount, category):
         }
 
         if category not in category_column:
-            print("Invalid category. Please choose from Salary, Freelance, or Misc.")
+            print("Invalid category. Please choose from 1, 2, 3")
             return
 
         # Update the income list (if needed) or directly update the sheet
         updateIncomeSheet(category, amount)
+        print(f"€{amount:.2f} was successfully uploaded to {category}.")  # Confirmation message
 
     except ValueError:
         print("Invalid amount. Please enter a numeric value.")
     except Exception as e:
         print("Error adding income:", e)
+
 
 def updateIncomeSheet(category, amount):
     """
@@ -113,6 +117,7 @@ def updateIncomeSheet(category, amount):
     except Exception as e:
         print("Error updating income sheet:", e)
 
+
 def addExpense(amount, category):
     """
     Adds an expense to the expenses list and updates the Google Sheet.
@@ -123,6 +128,7 @@ def addExpense(amount, category):
         updateExpenseSheet(category, amount)
     except Exception as e:
         print("Error adding expense:", e)
+
 
 def updateExpenseSheet(category, amount):
     """
@@ -165,11 +171,13 @@ def updateExpenseSheet(category, amount):
     except Exception as e:
         print("Error updating expense sheet:", e)
 
+
 def column_to_index(column_letter):
     """
     Converts column letter (e.g., 'A') to its numeric index (1).
     """
     return ord(column_letter.upper()) - ord('A') + 1
+
 
 def listExpenses():
     """
@@ -180,9 +188,10 @@ def listExpenses():
         print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
     print()
 
+
 def removeExpense():
     """
-    Allows the user to remove an expense by selecting from the last 10 expenses listed.
+    Allows the user to remove an expense.
     Ensures the user confirms the deletion before proceeding.
     """
     if not expenses:
@@ -204,8 +213,8 @@ def removeExpense():
     # Confirm deletion
     selected_expense = expenses[selection - 1]
     while True:
-        confirmation = input(f"Are you sure you want to remove {selected_expense['category']} - €{selected_expense['amount']:.2f}? (yes/no): ").lower()
-        if confirmation == 'yes':
+        confirmation = input(f"Remove {selected_expense['category']} - €{selected_expense['amount']:.2f}? (y/n): ").lower()
+        if confirmation == 'y':
             try:
                 expenses.pop(selection - 1)
                 updateExpensesSheet()
@@ -213,11 +222,12 @@ def removeExpense():
             except Exception as e:
                 print("Error removing expense:", e)
             break
-        elif confirmation == 'no':
+        elif confirmation == 'n':
             print("Operation canceled.")
             break
         else:
-            print("Sorry, please choose 'yes' or 'no'.")
+            print("Sorry, please choose 'y' or 'n'.")
+
 
 def updateExpensesSheet():
     """
@@ -227,7 +237,7 @@ def updateExpensesSheet():
         # Clear the sheet first
         EXPENSES_SHEET.clear()
 
-        # Re-populate the sheet with the updated expenses
+        # Reload the sheet with the updated expenses
         category_column = {
             "Rent/Mortgage": "A",
             "Utilities": "B",
@@ -245,9 +255,10 @@ def updateExpensesSheet():
             column_index = column_to_index(column)
             existing_values = EXPENSES_SHEET.col_values(column_index)
             row_to_update = len(existing_values) + 1
-            EXPENSES_SHEET.update_cell(row_to_update, column_index, expense['amount'])
+            EXPENSES_SHEET.update_cell(row_to_update, column_index, expense.get('amount'))
     except Exception as e:
         print("Error updating expenses sheet:", e)
+
 
 def printMenu():
     """
@@ -262,56 +273,56 @@ def printMenu():
     print('6. Exit')
 
 if __name__ == "__main__":
-    loadExpenses()  # Load existing expenses from the spreadsheet
+    loadExpenses()  # Load existing expenses
     while True:
         # Prompt the user
         printMenu()
         optionSelected = input('> ')
 
         if optionSelected == '1':
-                print("How much was this income?")
-                while True:
-                    try:
-                        amountToAdd = input("> ")
-                        float(amountToAdd)  # Check if the input is a valid float number
+            print("How much was this income?")
+            while True:
+                try:
+                    amountToAdd = input("> ")
+                    float(amountToAdd)  
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a valid amount.")
+
+            print("Please choose a category:")
+            print("1. Salary")
+            print("2. Freelance")
+            print("3. Misc")
+
+            category_map = {
+                "1": "Salary",
+                "2": "Freelance",
+                "3": "Misc"
+            }
+
+            while True:
+                try:
+                    category_choice = input("> ")
+                    if category_choice in category_map:
+                        category = category_map[category_choice]
                         break
-                    except ValueError:
-                        print("Invalid input. Please enter a valid amount.")
+                    else:
+                        raise ValueError("Invalid input")
+                except ValueError:
+                    print("Please enter a number between 1 and 3.")
 
-                print("Please choose a category:")
-                print("1. Salary")
-                print("2. Freelance")
-                print("3. Misc")
-
-                category_map = {
-                    "1": "Salary",
-                    "2": "Freelance",
-                    "3": "Misc"
-                }
-
-                while True:
-                    try:
-                        category_choice = input("> ")
-                        if category_choice in category_map:
-                            category = category_map[category_choice]
-                            break
-                        else:
-                            raise ValueError("Invalid input")
-                    except ValueError:
-                        print("Invalid input. Please enter a number between 1 and 3.")
-
-                addIncome(amountToAdd, category)  # Call function to add income to list and update Google Sheets
+            addIncome(amountToAdd, category)  
 
         elif optionSelected == '2':
             print("How much was this expense?")
             while True:
                 try:
                     amountToAdd = input("> ")
-                    float(amountToAdd)  # Check if the input is a valid float number
+                    float(amountToAdd)  # Check if its a valid float number
                     break
                 except ValueError:
-                    print("Invalid input. Please enter a valid amount.")
-
+                    print("Please enter a valid amount.")
+            
             print("Please choose a category (1-8):")
             print("1. Rent/Mortgage")
             print("2. Utilities")
@@ -321,17 +332,17 @@ if __name__ == "__main__":
             print("6. Entertainment")
             print("7. Savings")
             print("8. Miscellaneous")
+            
             while True:
                 try:
                     category = input("> ")
                     if category in ["1", "2", "3", "4", "5", "6", "7", "8"]:
+                        addExpense(amountToAdd, category)
                         break
                     else:
                         raise ValueError("Invalid input")
                 except ValueError:
-                    print("Invalid input. Please enter a number between 1 and 8.")
-
-            addExpense(amountToAdd, category)  # Call function to add expense to list and update Google Sheets
+                    print("Enter a number between 1 and 8.")
 
         elif optionSelected == '3':
             removeExpense()
@@ -340,11 +351,11 @@ if __name__ == "__main__":
             listExpenses()
 
         elif optionSelected == '5':
-            print("View Summary is not implemented yet.")
+            print("Not implemented yet.")
 
         elif optionSelected == '6':
             print("Exiting the program.")
             break
 
         else:
-            print("Invalid option. Please choose a number between 1 and 6.")
+            print("Please choose a number between 1 and 6.")
