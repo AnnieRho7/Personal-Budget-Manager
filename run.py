@@ -39,6 +39,7 @@ def loadExpenses():
     """
     Loads the existing expenses from the Google Sheets into the expenses list.
     """
+    # Define the category to column mapping
     category_column = {
         "Rent/Mortgage": "A",
         "Utilities": "B",
@@ -67,10 +68,9 @@ def loadExpenses():
 
 def addIncome(amount, category):
     """
-    Adds an income entry to the income list and updates the Google Sheet.
+    Adds an income entry to the income list.
     """
     try:
-        # Ensure amount is a float
         amount = float(amount)
 
         # Define the category to column mapping
@@ -84,7 +84,7 @@ def addIncome(amount, category):
             print("Invalid category. Please choose from 1, 2, 3")
             return
 
-        # Update the income list (if needed) or directly update the sheet
+        # Update the income list 
         updateIncomeSheet(category, amount)
         print(f"€{amount:.2f} was successfully uploaded to {category}.")  # Confirmation message
 
@@ -120,12 +120,34 @@ def updateIncomeSheet(category, amount):
 
 def addExpense(amount, category):
     """
-    Adds an expense to the expenses list and updates the Google Sheet.
+    Adds an expense and updates the Google Sheet.
     """
     try:
-        expense = {'amount': float(amount), 'category': category}
-        expenses.append(expense)
-        updateExpenseSheet(category, amount)
+        amount = float(amount)
+
+        category_column = {
+            "1": "Rent/Mortgage",
+            "2": "Utilities",
+            "3": "Shopping",
+            "4": "Transport",
+            "5": "Insurance",
+            "6": "Entertainment",
+            "7": "Savings",
+            "8": "Miscellaneous"
+        }
+
+        if category not in category_column:
+            print("Invalid category. Please choose from 1 to 8")
+            return
+
+        category_name = category_column[category]
+  
+        updateExpenseSheet(category_name, amount)
+
+        print(f"€{amount:.2f} was successfully uploaded to {category_name}.")  # Confirmation message
+
+    except ValueError:
+        print("Invalid amount. Please enter a numeric value.")
     except Exception as e:
         print("Error adding expense:", e)
 
@@ -134,17 +156,7 @@ def updateExpenseSheet(category, amount):
     """
     Updates the Google Sheets with the new expense data.
     """
-    category_map = {
-        "1": "Rent/Mortgage",
-        "2": "Utilities",
-        "3": "Shopping",
-        "4": "Transport",
-        "5": "Insurance",
-        "6": "Entertainment",
-        "7": "Savings",
-        "8": "Miscellaneous"
-    }
-
+    
     category_column = {
         "Rent/Mortgage": "A",
         "Utilities": "B",
@@ -157,17 +169,17 @@ def updateExpenseSheet(category, amount):
     }
 
     try:
-        # Get column letter for the selected category
-        category_name = category_map[category]
-        column = category_column[category_name]
+        column = category_column.get(category)
+        if not column:
+            raise ValueError(f"Column for category {category} not found.")
 
-        # Add the expense to the next available row in the appropriate column
         column_index = column_to_index(column)
         existing_values = EXPENSES_SHEET.col_values(column_index)
         row_to_update = len(existing_values) + 1
 
-        # Update the cell with the new amount
         EXPENSES_SHEET.update_cell(row_to_update, column_index, amount)
+        print(f"Expense added: {category} - €{amount:.2f}")
+
     except Exception as e:
         print("Error updating expense sheet:", e)
 
