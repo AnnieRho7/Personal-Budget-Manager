@@ -35,10 +35,9 @@ except Exception as e:
 expenses = []
 
 
-def loadExpenses():
-    """
-    Loads the existing expenses from the Google Sheets.
-    """
+def load_expenses():
+    """Loads the existing expenses from the Google Sheets."""
+
     expenses.clear()  # Clear the existing list to avoid duplicates
 
     category_column = {
@@ -59,18 +58,14 @@ def loadExpenses():
 
             for amount in values[1:]:  # Skip the header
                 if amount.strip():
-                    expenses.append({
-                        'amount': float(amount),
-                        'category': category
-                    })
+                           expenses.append({'amount': float(amount), 'category': category})
+
     except Exception as e:
         print("Error loading expenses:", e)
 
 
-def addIncome(amount, category):
-    """
-    Adds an income entry to the income list.
-    """
+def add_income(amount, category):
+    """Adds an income entry to the income list."""
     try:
         amount = float(amount)
 
@@ -84,9 +79,8 @@ def addIncome(amount, category):
         if category not in category_column:
             print("Invalid category. Please choose from 1, 2, 3\n")
             return
-
         # Update the income list 
-        updateIncomeSheet(category, amount)
+        update_income_sheet(category, amount)
         print(f"€{amount:.2f} was successfully uploaded to {category}.\n")
 
     except ValueError:
@@ -95,10 +89,9 @@ def addIncome(amount, category):
         print("Error adding income:", e)
 
 
-def updateIncomeSheet(category, amount):
-    """
-    Updates the Google Sheets with the new income data.
-    """
+def update_income_sheet(category, amount):
+    """Updates the Google Sheets with the new income data."""
+
     category_column = {
         "Salary": "A",
         "Freelance": "B",
@@ -109,9 +102,8 @@ def updateIncomeSheet(category, amount):
         column = category_column[category]
         column_index = column_to_index(column)
         existing_values = INCOME_SHEET.col_values(column_index)
-        row_to_update = len(existing_values) + 1
-
-        # Update the cell with the new amount
+        row_to_update = len(existing_values) + 1  
+          
         INCOME_SHEET.update_cell(row_to_update, column_index, amount)
         print(f"Income added to {category}: €{amount:.2f}")
 
@@ -119,10 +111,9 @@ def updateIncomeSheet(category, amount):
         print("Error updating income sheet:", e)
 
 
-def addExpense(amount, category):
-    """
-    Adds an expense and updates the Google Sheet.
-    """
+def add_expense(amount, category):
+    """Adds an expense and updates the Google Sheet."""
+    
     try:
         amount = float(amount)
 
@@ -143,8 +134,8 @@ def addExpense(amount, category):
 
         category_name = category_column[category]
 
-        updateExpenseSheet(category_name, amount)
-        loadExpenses()  # Reload the expenses after adding a new one
+        update_expense_sheet(category_name, amount)
+        load_expenses()  # Reload the expenses after adding a new one
 
         print(f"€{amount:.2f} was successfully uploaded to {category_name}.\n")
 
@@ -154,10 +145,9 @@ def addExpense(amount, category):
         print("Error adding expense:", e)
 
 
-def updateExpenseSheet(category, amount):
-    """
-    Updates the Google Sheets with the new expense data.
-    """
+def update_expense_sheet(category, amount):
+    """Updates the Google Sheets with the new expense data."""
+
     category_column = {
         "Rent/Mortgage": "A",
         "Utilities": "B",
@@ -192,26 +182,23 @@ def column_to_index(column_letter):
     return ord(column_letter.upper()) - ord('A') + 1
 
 
-def listExpenses():
-    """
-    Lists the last 10 expenses.
-    """
+def list_expenses():
+    """Lists the last 10 expenses."""
+    
     print("Last 10 Expenses:")
     for i, expense in enumerate(expenses[-10:], start=1):
         print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
 
 
-def removeExpense():
-    """
-    Allows the user to remove an expense.
-    Confirmation deleting expense.
-    """
+def remove_expense():
+    """Allows the user to remove an expense."""
+    
     if not expenses:
         print("No expenses to remove.\n")
         return
 
     print("Select the expense to remove:\n")
-    listExpenses()
+    list_expenses()
 
     try:
         selection = int(input("> "))
@@ -229,7 +216,7 @@ def removeExpense():
         if confirmation == 'y':
             try:
                 expenses.pop(selection - 1)
-                updateExpensesSheet()
+                update_expenses_sheet()
                 print("Expense removed.\n")
             except Exception as e:
                 print("Error removing expense:", e)
@@ -241,10 +228,9 @@ def removeExpense():
             print("Sorry, please choose 'y' or 'n'.\n")
 
 
-def updateExpensesSheet():
-    """
-    Updates the Expense Worksheet.
-    """
+def update_expenses_sheet():
+    """Updates the Expense Worksheet."""
+
     try:
         # Preserve the headers
         headers = EXPENSES_SHEET.row_values(1)
@@ -273,15 +259,14 @@ def updateExpensesSheet():
         print("Error updating expenses sheet:", e)
 
 
-def handleAddIncome():
-    """
-    Handle adding income by prompting user input for amount and category.
-    """
+def handle_add_income():
+    """Handle adding income by prompting user input for amount and category."""
+    
     print("How much was this income?")
     while True:
         try:
-            amountToAdd = input("> ")
-            float(amountToAdd)
+            amount_to_add = input("> ")
+            float(amount_to_add)
             break
         except ValueError:
             print("Invalid input. Please enter a valid amount.")
@@ -308,12 +293,12 @@ def handleAddIncome():
         except ValueError:
             print("Please enter a number between 1 and 3.")
 
-    addIncome(amountToAdd, category)
+    add_income(amount_to_add, category)
+
+
+def handle_add_expense():
+    """Handle adding expense by prompting user input for amount and category."""
     
-def handleAddExpense():
-    """
-    Handle adding expense by prompting user input for amount and category.
-    """
     print("How much was this expense?")
     while True:
         try:
@@ -337,8 +322,8 @@ def handleAddExpense():
         try:
             category = input("> ")
             if category in ["1", "2", "3", "4", "5", "6", "7", "8"]:
-                addExpense(amountToAdd, category)
-                loadExpenses()
+                add_expense(amountToAdd, category)
+                load_expenses()
                 break
             else:
                 raise ValueError("Invalid input")
@@ -346,10 +331,9 @@ def handleAddExpense():
             print("Enter a number between 1 and 8.\n")
 
 
-def calculateTotalIncome():
-    """
-    Calculate the total income from the income sheet.
-    """
+def calculate_total_income():
+    """Calculate the total income from the income sheet."""
+    
     category_columns = ["A", "B", "C"]  # Columns for Salary, Freelance, and Misc
     total_income = 0.0
 
@@ -363,10 +347,9 @@ def calculateTotalIncome():
 
     return total_income
 
-def calculateTotalExpenses():
-    """
-    Calculate the total expenses from the expense sheet.
-    """
+def calculate_total_expenses():
+    """Calculate the total expenses from the expense sheet."""
+    
     category_columns = ["A", "B", "C", "D", "E", "F", "G", "H"]  # Columns for all expense categories
     total_expenses = 0.0
 
@@ -379,35 +362,31 @@ def calculateTotalExpenses():
 
     return total_expenses
 
-def calculateTotalNetSavings(total_income, total_expenses):
-    """
-    Calculates the total net savings.
-    """
+def calculate_total_net_savings(total_income, total_expenses):
+    """Calculates the total net savings."""
+    
     return total_income - total_expenses
 
 
-def viewSummary():
-    """
-    Displays the summary of total income, expenses, and net savings,
-    and updates the summary worksheet.
-    """
+def view_summary():
+    """Displays the summary of total income, expenses, and net savings, and updates the summary worksheet."""
+    
     try:
-        total_income = calculateTotalIncome()
-        total_expenses = calculateTotalExpenses()
-        total_net_savings = calculateTotalNetSavings(total_income, total_expenses)
+        total_income = calculate_total_income()
+        total_expenses = calculate_total_expenses()
+        total_net_savings = calculate_total_net_savings(total_income, total_expenses)
 
         print(f"Total Income: €{total_income:.2f}")
         print(f"Total Expenses: €{total_expenses:.2f}")
-        print(f"Total Net Savings:€{total_net_savings:.2f}\n")
+        print(f"Total Net Savings: €{total_net_savings:.2f}\n")
 
-        updateSummarySheet(total_income, total_expenses, total_net_savings)
+        update_summary_sheet(total_income, total_expenses, total_net_savings)
+        
     except Exception as e:
         print("Error viewing summary:", e, "\n")
         
-def updateSummarySheet(total_income, total_expenses, total_net_savings):
-    """
-    Updates the summary worksheet with the total income, total expenses, and total net savings.
-    """
+def update_summary_sheet(total_income, total_expenses, total_net_savings):
+    """Updates the summary worksheet with the total income, total expenses, and total net savings."""
     try:
         cell_range = 'A2:C2'
         values = [[total_income, total_expenses, total_net_savings]]
@@ -417,14 +396,13 @@ def updateSummarySheet(total_income, total_expenses, total_net_savings):
         print("Error updating summary sheet:", e)
 
 
-def printBreak():
+def print_break():
     print("\n" + "-" * 40 + "\n")
     
 
-def printMenu():
-    """
-    Displays the menu options to the user.
-    """
+def print_menu():
+    """Displays the menu options to the user."""
+
     print('Please choose from one of the following options (1-6)... ')
     print('1. Add Income')
     print('2. Add Expense')
@@ -435,27 +413,21 @@ def printMenu():
 
 
 if __name__ == "__main__":
-    loadExpenses()
+    load_expenses()
     while True:
         # Prompt the user
-        printMenu()
+        print_menu()
         optionSelected = input('> ')
-
         if optionSelected == '1':
-            handleAddIncome()
-
+            handle_add_income()
         elif optionSelected == '2':
-            handleAddExpense()
-
+            handle_add_expense()
         elif optionSelected == '3':
-            removeExpense()
-
+            remove_expense()
         elif optionSelected == '4':
-            listExpenses()
-
+            list_expenses()
         elif optionSelected == '5':
-            viewSummary()
-
+            view_summary()
         elif optionSelected == '6':
             print("You have exited the program.")
             break
