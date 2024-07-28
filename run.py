@@ -82,15 +82,15 @@ def addIncome(amount, category):
         }
 
         if category not in category_column:
-            print("Invalid category. Please choose from 1, 2, 3")
+            print("Invalid category. Please choose from 1, 2, 3\n")
             return
 
         # Update the income list 
         updateIncomeSheet(category, amount)
-        print(f"€{amount:.2f} was successfully uploaded to {category}.")
+        print(f"€{amount:.2f} was successfully uploaded to {category}.\n")
 
     except ValueError:
-        print("Invalid amount. Please enter a numeric value.")
+        print("Invalid amount. Please enter a numeric value.\n")
     except Exception as e:
         print("Error adding income:", e)
 
@@ -138,7 +138,7 @@ def addExpense(amount, category):
         }
 
         if category not in category_column:
-            print("Invalid category. Please choose from 1 to 8")
+            print("Invalid category. Please choose from 1 to 8\n")
             return
 
         category_name = category_column[category]
@@ -146,10 +146,10 @@ def addExpense(amount, category):
         updateExpenseSheet(category_name, amount)
         loadExpenses()  # Reload the expenses after adding a new one
 
-        print(f"€{amount:.2f} was successfully uploaded to {category_name}.")
+        print(f"€{amount:.2f} was successfully uploaded to {category_name}.\n")
 
     except ValueError:
-        print("Invalid amount. Please enter a numeric value.")
+        print("Invalid amount. Please enter a numeric value.\n")
     except Exception as e:
         print("Error adding expense:", e)
 
@@ -172,14 +172,14 @@ def updateExpenseSheet(category, amount):
     try:
         column = category_column.get(category)
         if not column:
-            raise ValueError(f"Column for category {category} not found.")
+            raise ValueError(f"Column for category {category} not found.\n")
 
         column_index = column_to_index(column)
         existing_values = EXPENSES_SHEET.col_values(column_index)
         row_to_update = len(existing_values) + 1
 
         EXPENSES_SHEET.update_cell(row_to_update, column_index, amount)
-        print(f"Expense added: {category} - €{amount:.2f}")
+        print(f"Expense added: {category} - €{amount:.2f}\n")
 
     except Exception as e:
         print("Error updating expense sheet:", e)
@@ -199,7 +199,6 @@ def listExpenses():
     print("Last 10 Expenses:")
     for i, expense in enumerate(expenses[-10:], start=1):
         print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
-    print()
 
 
 def removeExpense():
@@ -208,19 +207,19 @@ def removeExpense():
     Confirmation deleting expense.
     """
     if not expenses:
-        print("No expenses to remove.")
+        print("No expenses to remove.\n")
         return
 
-    print("Select the expense to remove:")
+    print("Select the expense to remove:\n")
     listExpenses()
 
     try:
         selection = int(input("> "))
         if selection < 1 or selection > len(expenses):
-            print("Please choose a valid expense number.")
+            print("Please choose a valid expense number.\n")
             return
     except ValueError:
-        print("Please enter a number.")
+        print("Please enter a number.\n")
         return
 
     # Confirm deletion
@@ -231,15 +230,15 @@ def removeExpense():
             try:
                 expenses.pop(selection - 1)
                 updateExpensesSheet()
-                print("Expense removed.")
+                print("Expense removed.\n")
             except Exception as e:
                 print("Error removing expense:", e)
             break
         elif confirmation == 'n':
-            print("Operation canceled.")
+            print("Operation canceled.\n")
             break
         else:
-            print("Sorry, please choose 'y' or 'n'.")
+            print("Sorry, please choose 'y' or 'n'.\n")
 
 
 def updateExpensesSheet():
@@ -322,7 +321,7 @@ def handleAddExpense():
             float(amountToAdd)
             break
         except ValueError:
-            print("Please enter a valid amount.")
+            print("Please enter a valid amount.\n")
 
     print("Please choose a category (1-8):")
     print("1. Rent/Mortgage")
@@ -344,8 +343,60 @@ def handleAddExpense():
             else:
                 raise ValueError("Invalid input")
         except ValueError:
-            print("Enter a number between 1 and 8.")
+            print("Enter a number between 1 and 8.\n")
 
+
+def calculateTotalIncome():
+    """
+    Calculate the total income from the income sheet.
+    """
+    category_columns = ["A", "B", "C"]  # Columns for Salary, Freelance, and Misc
+    total_income = 0.0
+
+    for column in category_columns:
+        values = INCOME_SHEET.col_values(column_to_index(column))
+        for amount in values[1:]:  # Skip the header
+            if amount.strip():
+                 # Remove commas from the amount string
+                amount = amount.replace(',', '')
+                total_income += float(amount)
+
+    return total_income
+
+def calculateTotalExpenses():
+    """
+    Calculate the total expenses from the expense sheet.
+    """
+    category_columns = ["A", "B", "C", "D", "E", "F", "G", "H"]  # Columns for all expense categories
+    total_expenses = 0.0
+
+    for column in category_columns:
+        values = EXPENSES_SHEET.col_values(column_to_index(column))
+        for amount in values[1:]:  # Skip the header
+            if amount.strip():
+                amount = amount.replace(',', '')
+                total_expenses += float(amount)
+
+    return total_expenses
+
+
+def viewSummary():
+    """
+    Display the summary of total income, total expenses, and total savings.
+    """
+    total_income = calculateTotalIncome()
+    total_expenses = calculateTotalExpenses()
+    total__net_savings = total_income - total_expenses
+
+    print("Summary:")
+    print(f"Total Income: €{total_income:.2f}")
+    print(f"Total Expenses: €{total_expenses:.2f}")
+    print(f"Net Savings: €{total_net_savings:.2f}\n")
+
+
+def printBreak():
+    print("\n" + "-" * 40 + "\n")
+    
 
 def printMenu():
     """
@@ -380,10 +431,11 @@ if __name__ == "__main__":
             listExpenses()
 
         elif optionSelected == '5':
-            print("Not implemented yet.")
+            viewSummary()
+            
 
         elif optionSelected == '6':
-            print("Exiting the program.")
+            print("You have exited the program.")
             break
 
         else:
