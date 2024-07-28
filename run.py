@@ -87,7 +87,7 @@ def addIncome(amount, category):
 
         # Update the income list 
         updateIncomeSheet(category, amount)
-        print(f"€{amount:.2f} was successfully uploaded to {category}.")  # Confirmation message
+        print(f"€{amount:.2f} was successfully uploaded to {category}.")
 
     except ValueError:
         print("Invalid amount. Please enter a numeric value.")
@@ -142,11 +142,11 @@ def addExpense(amount, category):
             return
 
         category_name = category_column[category]
-  
+
         updateExpenseSheet(category_name, amount)
         loadExpenses()  # Reload the expenses after adding a new one
 
-        print(f"€{amount:.2f} was successfully uploaded to {category_name}.")  # Confirmation message
+        print(f"€{amount:.2f} was successfully uploaded to {category_name}.")
 
     except ValueError:
         print("Invalid amount. Please enter a numeric value.")
@@ -158,7 +158,6 @@ def updateExpenseSheet(category, amount):
     """
     Updates the Google Sheets with the new expense data.
     """
-    
     category_column = {
         "Rent/Mortgage": "A",
         "Utilities": "B",
@@ -287,6 +286,7 @@ def printMenu():
     print('5. View Summary')
     print('6. Exit')
 
+
 if __name__ == "__main__":
     loadExpenses()
     while True:
@@ -299,7 +299,7 @@ if __name__ == "__main__":
             while True:
                 try:
                     amountToAdd = input("> ")
-                    float(amountToAdd)  
+                    float(amountToAdd)
                     break
                 except ValueError:
                     print("Invalid input. Please enter a valid amount.")
@@ -326,7 +326,7 @@ if __name__ == "__main__":
                 except ValueError:
                     print("Please enter a number between 1 and 3.")
 
-            addIncome(amountToAdd, category)  
+            addIncome(amountToAdd, category)
 
         elif optionSelected == '2':
             print("How much was this expense?")
@@ -337,7 +337,7 @@ if __name__ == "__main__":
                     break
                 except ValueError:
                     print("Please enter a valid amount.")
-            
+
             print("Please choose a category (1-8):")
             print("1. Rent/Mortgage")
             print("2. Utilities")
@@ -347,7 +347,7 @@ if __name__ == "__main__":
             print("6. Entertainment")
             print("7. Savings")
             print("8. Miscellaneous")
-            
+
             while True:
                 try:
                     category = input("> ")
