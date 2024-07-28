@@ -144,6 +144,7 @@ def addExpense(amount, category):
         category_name = category_column[category]
   
         updateExpenseSheet(category_name, amount)
+        loadExpenses()  # Reload the expenses after adding a new one
 
         print(f"€{amount:.2f} was successfully uploaded to {category_name}.")  # Confirmation message
 
@@ -194,7 +195,7 @@ def column_to_index(column_letter):
 
 def listExpenses():
     """
-    Lists the last 10 expenses from the expenses list.
+    Lists the last 10 expenses.
     """
     print("Last 10 Expenses:")
     for i, expense in enumerate(expenses[-10:], start=1):
@@ -244,7 +245,7 @@ def removeExpense():
 
 def updateExpensesSheet():
     """
-    Updates the Google Sheet.
+    Updates the Expense Worksheet.
     """
     try:
         # Preserve the headers
