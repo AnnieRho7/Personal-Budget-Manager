@@ -379,19 +379,42 @@ def calculateTotalExpenses():
 
     return total_expenses
 
+def calculateTotalNetSavings(total_income, total_expenses):
+    """
+    Calculates the total net savings.
+    """
+    return total_income - total_expenses
+
 
 def viewSummary():
     """
-    Display the summary of total income, total expenses, and total savings.
+    Displays the summary of total income, expenses, and net savings,
+    and updates the summary worksheet.
     """
-    total_income = calculateTotalIncome()
-    total_expenses = calculateTotalExpenses()
-    total__net_savings = total_income - total_expenses
+    try:
+        total_income = calculateTotalIncome()
+        total_expenses = calculateTotalExpenses()
+        total_net_savings = calculateTotalNetSavings(total_income, total_expenses)
 
-    print("Summary:")
-    print(f"Total Income: €{total_income:.2f}")
-    print(f"Total Expenses: €{total_expenses:.2f}")
-    print(f"Net Savings: €{total_net_savings:.2f}\n")
+        print(f"Total Income: €{total_income:.2f}")
+        print(f"Total Expenses: €{total_expenses:.2f}")
+        print(f"Total Net Savings:€{total_net_savings:.2f}\n")
+
+        updateSummarySheet(total_income, total_expenses, total_net_savings)
+    except Exception as e:
+        print("Error viewing summary:", e, "\n")
+        
+def updateSummarySheet(total_income, total_expenses, total_net_savings):
+    """
+    Updates the summary worksheet with the total income, total expenses, and total net savings.
+    """
+    try:
+        cell_range = 'A2:C2'
+        values = [[total_income, total_expenses, total_net_savings]]
+
+        SUMMARY_SHEET.update(values, cell_range)
+    except Exception as e:
+        print("Error updating summary sheet:", e)
 
 
 def printBreak():
@@ -432,7 +455,6 @@ if __name__ == "__main__":
 
         elif optionSelected == '5':
             viewSummary()
-            
 
         elif optionSelected == '6':
             print("You have exited the program.")
