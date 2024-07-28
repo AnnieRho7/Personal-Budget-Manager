@@ -7,33 +7,45 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-try:
-    # Load credentials from the JSON file
-    CREDS = Credentials.from_service_account_file('creds.json')
-    SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-    GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
-except Exception as e:
-    print("Error loading credentials or authorizing gspread client:", e)
-    exit(1)
 
-try:
-    # Open the spreadsheet
-    SHEET = GSPREAD_CLIENT.open('personal-budget-manager')
-except Exception as e:
-    print("Error opening spreadsheet:", e)
-    exit(1)
+def load_gspread_client(credentials_file, scope):
+    """Loads gspread client with given credentials and scope."""
+    try:
+        creds = Credentials.from_service_account_file(credentials_file)
+        scoped_creds = creds.with_scopes(scope)
+        client = gspread.authorize(scoped_creds)
+        return client
+    except Exception as e:
+        print("Error loading credentials or authorizing gspread client:", e)
+        exit(1)
 
-try:
-    # Access worksheets
-    INCOME_SHEET = SHEET.worksheet('income')
-    EXPENSES_SHEET = SHEET.worksheet('expenses')
-    SUMMARY_SHEET = SHEET.worksheet('summary')
-except Exception as e:
-    print("Error accessing worksheets:", e)
-    exit(1)
+
+def open_spreadsheet(client, spreadsheet_name):
+    """Opens the Google Sheets spreadsheet with the given name."""
+    try:
+        sheet = client.open(spreadsheet_name)
+        return sheet
+    except Exception as e:
+        print("Error opening spreadsheet:", e)
+        exit(1)
+
+
+def access_worksheet(sheet, worksheet_name):
+    """Accesses the specified worksheet from the Google Sheets spreadsheet."""
+    try:
+        worksheet = sheet.worksheet(worksheet_name)
+        return worksheet
+    except Exception as e:
+        print(f"Error accessing worksheet '{worksheet_name}':", e)
+        exit(1)
+
+GSPREAD_CLIENT = load_gspread_client('creds.json', SCOPE)
+SHEET = open_spreadsheet(GSPREAD_CLIENT, 'personal-budget-manager')
+INCOME_SHEET = access_worksheet(SHEET, 'income')
+EXPENSES_SHEET = access_worksheet(SHEET, 'expenses')
+SUMMARY_SHEET = access_worksheet(SHEET, 'summary')
 
 expenses = []
-
 
 def load_expenses():
     """Loads the existing expenses from the Google Sheets."""
