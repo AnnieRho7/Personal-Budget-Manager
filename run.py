@@ -37,9 +37,10 @@ expenses = []
 
 def loadExpenses():
     """
-    Loads the existing expenses from the Google Sheets into the expenses list.
+    Loads the existing expenses from the Google Sheets.
     """
-    # Define the category to column mapping
+    expenses.clear()  # Clear the existing list to avoid duplicates
+
     category_column = {
         "Rent/Mortgage": "A",
         "Utilities": "B",
@@ -56,7 +57,7 @@ def loadExpenses():
             column_index = column_to_index(column)
             values = EXPENSES_SHEET.col_values(column_index)
 
-            for amount in values[1:]:
+            for amount in values[1:]:  # Skip the header
                 if amount.strip():
                     expenses.append({
                         'amount': float(amount),
@@ -204,7 +205,7 @@ def listExpenses():
 def removeExpense():
     """
     Allows the user to remove an expense.
-    Ensures the user confirms the deletion before proceeding.
+    Confirmation deleting expense.
     """
     if not expenses:
         print("No expenses to remove.")
@@ -216,10 +217,10 @@ def removeExpense():
     try:
         selection = int(input("> "))
         if selection < 1 or selection > len(expenses):
-            print("Invalid selection. Please choose a valid expense number.")
+            print("Please choose a valid expense number.")
             return
     except ValueError:
-        print("Invalid input. Please enter a number.")
+        print("Please enter a number.")
         return
 
     # Confirm deletion
@@ -243,13 +244,14 @@ def removeExpense():
 
 def updateExpensesSheet():
     """
-    Updates the Google Sheets with the current expense data.
+    Updates the Google Sheet.
     """
     try:
-        # Clear the sheet first
+        # Preserve the headers
+        headers = EXPENSES_SHEET.row_values(1)
         EXPENSES_SHEET.clear()
+        EXPENSES_SHEET.insert_row(headers, 1)
 
-        # Reload the sheet with the updated expenses
         category_column = {
             "Rent/Mortgage": "A",
             "Utilities": "B",
@@ -285,7 +287,7 @@ def printMenu():
     print('6. Exit')
 
 if __name__ == "__main__":
-    loadExpenses()  # Load existing expenses
+    loadExpenses()
     while True:
         # Prompt the user
         printMenu()
