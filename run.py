@@ -310,6 +310,41 @@ def handleAddIncome():
             print("Please enter a number between 1 and 3.")
 
     addIncome(amountToAdd, category)
+    
+def handleAddExpense():
+    """
+    Handle adding expense by prompting user input for amount and category.
+    """
+    print("How much was this expense?")
+    while True:
+        try:
+            amountToAdd = input("> ")
+            float(amountToAdd)
+            break
+        except ValueError:
+            print("Please enter a valid amount.")
+
+    print("Please choose a category (1-8):")
+    print("1. Rent/Mortgage")
+    print("2. Utilities")
+    print("3. Shopping")
+    print("4. Transport")
+    print("5. Insurance")
+    print("6. Entertainment")
+    print("7. Savings")
+    print("8. Miscellaneous")
+
+    while True:
+        try:
+            category = input("> ")
+            if category in ["1", "2", "3", "4", "5", "6", "7", "8"]:
+                addExpense(amountToAdd, category)
+                loadExpenses()
+                break
+            else:
+                raise ValueError("Invalid input")
+        except ValueError:
+            print("Enter a number between 1 and 8.")
 
 
 def printMenu():
@@ -336,35 +371,7 @@ if __name__ == "__main__":
             handleAddIncome()
 
         elif optionSelected == '2':
-            print("How much was this expense?")
-            while True:
-                try:
-                    amountToAdd = input("> ")
-                    float(amountToAdd)  # Check if its a valid float number
-                    break
-                except ValueError:
-                    print("Please enter a valid amount.")
-
-            print("Please choose a category (1-8):")
-            print("1. Rent/Mortgage")
-            print("2. Utilities")
-            print("3. Shopping")
-            print("4. Transport")
-            print("5. Insurance")
-            print("6. Entertainment")
-            print("7. Savings")
-            print("8. Miscellaneous")
-
-            while True:
-                try:
-                    category = input("> ")
-                    if category in ["1", "2", "3", "4", "5", "6", "7", "8"]:
-                        addExpense(amountToAdd, category)
-                        break
-                    else:
-                        raise ValueError("Invalid input")
-                except ValueError:
-                    print("Enter a number between 1 and 8.")
+            handleAddExpense()
 
         elif optionSelected == '3':
             removeExpense()
