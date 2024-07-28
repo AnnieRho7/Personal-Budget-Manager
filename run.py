@@ -274,6 +274,44 @@ def updateExpensesSheet():
         print("Error updating expenses sheet:", e)
 
 
+def handleAddIncome():
+    """
+    Handle adding income by prompting user input for amount and category.
+    """
+    print("How much was this income?")
+    while True:
+        try:
+            amountToAdd = input("> ")
+            float(amountToAdd)
+            break
+        except ValueError:
+            print("Invalid input. Please enter a valid amount.")
+
+    print("Please choose a category:")
+    print("1. Salary")
+    print("2. Freelance")
+    print("3. Misc")
+
+    category_map = {
+        "1": "Salary",
+        "2": "Freelance",
+        "3": "Misc"
+    }
+
+    while True:
+        try:
+            category_choice = input("> ")
+            if category_choice in category_map:
+                category = category_map[category_choice]
+                break
+            else:
+                raise ValueError("Invalid input")
+        except ValueError:
+            print("Please enter a number between 1 and 3.")
+
+    addIncome(amountToAdd, category)
+
+
 def printMenu():
     """
     Displays the menu options to the user.
@@ -295,38 +333,7 @@ if __name__ == "__main__":
         optionSelected = input('> ')
 
         if optionSelected == '1':
-            print("How much was this income?")
-            while True:
-                try:
-                    amountToAdd = input("> ")
-                    float(amountToAdd)
-                    break
-                except ValueError:
-                    print("Invalid input. Please enter a valid amount.")
-
-            print("Please choose a category:")
-            print("1. Salary")
-            print("2. Freelance")
-            print("3. Misc")
-
-            category_map = {
-                "1": "Salary",
-                "2": "Freelance",
-                "3": "Misc"
-            }
-
-            while True:
-                try:
-                    category_choice = input("> ")
-                    if category_choice in category_map:
-                        category = category_map[category_choice]
-                        break
-                    else:
-                        raise ValueError("Invalid input")
-                except ValueError:
-                    print("Please enter a number between 1 and 3.")
-
-            addIncome(amountToAdd, category)
+            handleAddIncome()
 
         elif optionSelected == '2':
             print("How much was this expense?")
