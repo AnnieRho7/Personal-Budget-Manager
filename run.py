@@ -7,6 +7,39 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
 ]
 
+CATEGORY_COLUMN_EXPENSES = {
+    "Rent/Mortgage": "A",
+    "Utilities": "B",
+    "Shopping": "C",
+    "Transport": "D",
+    "Insurance": "E",
+    "Entertainment": "F",
+    "Savings": "G",
+    "Miscellaneous": "H"
+}
+
+CATEGORY_COLUMN_INCOME = {
+    "Salary": "A",
+    "Freelance": "B",
+    "Misc": "C"
+}
+
+CATEGORY_MAPPING_EXPENSES = {
+    "1": "Rent/Mortgage",
+    "2": "Utilities",
+    "3": "Shopping",
+    "4": "Transport",
+    "5": "Insurance",
+    "6": "Entertainment",
+    "7": "Savings",
+    "8": "Miscellaneous"
+}
+
+CATEGORY_MAPPING_INCOME = {
+    "1": "Salary",
+    "2": "Freelance",
+    "3": "Misc"
+}
 
 def load_gspread_client(credentials_file, scope):
     """Loads gspread client with given credentials and scope."""
@@ -49,28 +82,16 @@ expenses = []
 
 def load_expenses():
     """Loads the existing expenses from the Google Sheets."""
-
     expenses.clear()  # Clear the existing list to avoid duplicates
 
-    category_column = {
-        "Rent/Mortgage": "A",
-        "Utilities": "B",
-        "Shopping": "C",
-        "Transport": "D",
-        "Insurance": "E",
-        "Entertainment": "F",
-        "Savings": "G",
-        "Miscellaneous": "H"
-    }
-
     try:
-        for category, column in category_column.items():
+        for category, column in CATEGORY_COLUMN_EXPENSES.items():
             column_index = column_to_index(column)
             values = EXPENSES_SHEET.col_values(column_index)
 
             for amount in values[1:]:  # Skip the header
                 if amount.strip():
-                           expenses.append({'amount': float(amount), 'category': category})
+                    expenses.append({'amount': float(amount), 'category': category})
 
     except Exception as e:
         print("Error loading expenses:", e)
@@ -81,18 +102,11 @@ def add_income(amount, category):
     try:
         amount = float(amount)
 
-        # Define the category to column mapping
-        category_column = {
-            "Salary": "A",
-            "Freelance": "B",
-            "Misc": "C"
-        }
-
-        if category not in category_column:
+        if category not in CATEGORY_COLUMN_INCOME:
             print("Invalid category. Please choose from 1, 2, 3\n")
             return
         # Update the income list 
-        update_income_sheet(category, amount)
+        update_income_sheet(CATEGORY_COLUMN_INCOME[category], amount)
         print(f"€{amount:.2f} was successfully uploaded to {category}.\n")
 
     except ValueError:
@@ -101,23 +115,15 @@ def add_income(amount, category):
         print("Error adding income:", e)
 
 
-def update_income_sheet(category, amount):
+def update_income_sheet(column, amount):
     """Updates the Google Sheets with the new income data."""
-
-    category_column = {
-        "Salary": "A",
-        "Freelance": "B",
-        "Misc": "C"
-    }
-
     try:
-        column = category_column[category]
         column_index = column_to_index(column)
         existing_values = INCOME_SHEET.col_values(column_index)
         row_to_update = len(existing_values) + 1  
           
         INCOME_SHEET.update_cell(row_to_update, column_index, amount)
-        print(f"Income added to {category}: €{amount:.2f}")
+        print(f"Income added: €{amount:.2f}")
 
     except Exception as e:
         print("Error updating income sheet:", e)
@@ -125,28 +131,15 @@ def update_income_sheet(category, amount):
 
 def add_expense(amount, category):
     """Adds an expense and updates the Google Sheet."""
-    
     try:
         amount = float(amount)
 
-        category_column = {
-            "1": "Rent/Mortgage",
-            "2": "Utilities",
-            "3": "Shopping",
-            "4": "Transport",
-            "5": "Insurance",
-            "6": "Entertainment",
-            "7": "Savings",
-            "8": "Miscellaneous"
-        }
-
-        if category not in category_column:
+        if category not in CATEGORY_MAPPING_EXPENSES:
             print("Invalid category. Please choose from 1 to 8\n")
             return
 
-        category_name = category_column[category]
-
-        update_expense_sheet(category_name, amount)
+        category_name = CATEGORY_MAPPING_EXPENSES[category]
+        update_expense_sheet(CATEGORY_COLUMN_EXPENSES[category_name], amount)
         load_expenses()  # Reload the expenses after adding a new one
 
         print(f"€{amount:.2f} was successfully uploaded to {category_name}.\n")
@@ -157,31 +150,15 @@ def add_expense(amount, category):
         print("Error adding expense:", e)
 
 
-def update_expense_sheet(category, amount):
+def update_expense_sheet(column, amount):
     """Updates the Google Sheets with the new expense data."""
-
-    category_column = {
-        "Rent/Mortgage": "A",
-        "Utilities": "B",
-        "Shopping": "C",
-        "Transport": "D",
-        "Insurance": "E",
-        "Entertainment": "F",
-        "Savings": "G",
-        "Miscellaneous": "H"
-    }
-
     try:
-        column = category_column.get(category)
-        if not column:
-            raise ValueError(f"Column for category {category} not found.\n")
-
         column_index = column_to_index(column)
         existing_values = EXPENSES_SHEET.col_values(column_index)
         row_to_update = len(existing_values) + 1
 
         EXPENSES_SHEET.update_cell(row_to_update, column_index, amount)
-        print(f"Expense added: {category} - €{amount:.2f}\n")
+        print(f"Expense added: €{amount:.2f}\n")
 
     except Exception as e:
         print("Error updating expense sheet:", e)
@@ -249,17 +226,6 @@ def update_expenses_sheet():
         EXPENSES_SHEET.clear()
         EXPENSES_SHEET.insert_row(headers, 1)
 
-        category_column = {
-            "Rent/Mortgage": "A",
-            "Utilities": "B",
-            "Shopping": "C",
-            "Transport": "D",
-            "Insurance": "E",
-            "Entertainment": "F",
-            "Savings": "G",
-            "Miscellaneous": "H"
-        }
-
         for expense in expenses:
             category_name = expense['category']
             column = category_column[category_name]
@@ -273,7 +239,6 @@ def update_expenses_sheet():
 
 def handle_add_income():
     """Handle adding income by prompting user input for amount and category."""
-    
     print("How much was this income?")
     while True:
         try:
@@ -284,21 +249,14 @@ def handle_add_income():
             print("Invalid input. Please enter a valid amount.")
 
     print("Please choose a category:")
-    print("1. Salary")
-    print("2. Freelance")
-    print("3. Misc")
-
-    category_map = {
-        "1": "Salary",
-        "2": "Freelance",
-        "3": "Misc"
-    }
+    for key, value in CATEGORY_MAPPING_INCOME.items():
+        print(f"{key}. {value}")
 
     while True:
         try:
             category_choice = input("> ")
-            if category_choice in category_map:
-                category = category_map[category_choice]
+            if category_choice in CATEGORY_MAPPING_INCOME:
+                category = CATEGORY_MAPPING_INCOME[category_choice]
                 break
             else:
                 raise ValueError("Invalid input")
@@ -310,31 +268,24 @@ def handle_add_income():
 
 def handle_add_expense():
     """Handle adding expense by prompting user input for amount and category."""
-    
     print("How much was this expense?")
     while True:
         try:
-            amountToAdd = input("> ")
-            float(amountToAdd)
+            amount_to_add = input("> ")
+            float(amount_to_add)
             break
         except ValueError:
             print("Please enter a valid amount.\n")
 
     print("Please choose a category (1-8):")
-    print("1. Rent/Mortgage")
-    print("2. Utilities")
-    print("3. Shopping")
-    print("4. Transport")
-    print("5. Insurance")
-    print("6. Entertainment")
-    print("7. Savings")
-    print("8. Miscellaneous")
+    for key, value in CATEGORY_MAPPING_EXPENSES.items():
+        print(f"{key}. {value}")
 
     while True:
         try:
             category = input("> ")
-            if category in ["1", "2", "3", "4", "5", "6", "7", "8"]:
-                add_expense(amountToAdd, category)
+            if category in CATEGORY_MAPPING_EXPENSES:
+                add_expense(amount_to_add, category)
                 load_expenses()
                 break
             else:
