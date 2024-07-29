@@ -8,32 +8,6 @@ The Personal Budget Manager is an application designed to help the user manage t
 
 [View live project here](https://personal-budget-manager9-b331ef6b8de1.herokuapp.com/)
 
-## Table of Contents
-
-- [User Experience (UX)](#user-experience-ux)
-  - [User Stories](#user-stories)
-  - [Developer Goals](#developer-goals)
-- [Features](#features)
-  - [Add Income](#add-income)
-  - [Add Expense](#add-expense)
-  - [Remove Expense](#remove-expense)
-  - [List Expenses](#list-expenses)
-  - [View Summary](#view-summary)
-  - [Future Features](#future-features)
-- [Technologies Used](#technologies-used)
-  - [Languages](#languages)
-  - [Frameworks and Libraries](#frameworks-and-libraries)
-  - [Tools](#tools)
-- [Testing](#testing)
-  - [Unit Testing](#unit-testing)
-  - [Integration Testing](#integration-testing)
-  - [User Acceptance Testing](#user-acceptance-testing)
-  - [Resolved Bugs](#resolved-bugs)
-- [Deployment](#deployment)
-  - [Local Deployment](#local-deployment)
-  - [Heroku Deployment](#heroku-deployment)
-- [Credits and References](#credits-and-references)
-
 ## User Experience (UX)
 
 ### User Stories
