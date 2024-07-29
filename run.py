@@ -396,4 +396,4 @@ if __name__ == "__main__":
             break
 
         else:
-            print("Please choose a number between 1 and 6.")
+            print("Error. Please choose a number between 1 and 6.\n")
