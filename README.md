@@ -135,8 +135,28 @@ I manually tested this project by doing the following:
 
 ### Bugs
 
-- When I was writing this project I kept having isses with connecting the google sheets but I resolved this by cleaning up my code and making sure all headings and titles were the same so there was no confusion.
-- When validating my code I ran it through [CI Python Linter](https://pep8ci.herokuapp.com/#) this confirmed there was a few errors but I quickly cleaned them up.
+### Known Issues and Resolutions
+
+1. **Quota Exceeded Error**
+   - **Description:** The application may encounter a `Quota Exceeded` error when the number of read requests to the Google Sheets API exceeds the allowed quota.
+   - **Resolution:** Implement rate limiting and batch requests to manage API usage efficiently. Optimise the number of API calls made by the application.
+   ![Quota Exceed Error](/readmeimages/error.png)
+
+2. **Line Length Exceeding PEP 8 Standards**
+   - **Description:** Some lines of code exceed the recommended 79-character limit set by PEP 8.
+   - **Resolution:** Refactor long lines into shorter lines by breaking them up or using intermediate variables to improve readability.
+   - I tried to fix this bug and follow the PEP8 guildlines but I still got an error.
+   ![PEP8](/readmeimages/pep8v.png)
+
+   ![PEP8](/readmeimages/error4.png)
+
+   ![PEP8](/readmeimages/error3.png)
+   
+
+3. **Invalid User Input Handling**
+   - **Description:** The error message for invalid menu options is generic and not very descriptive.
+   - **Resolution:** Update error messages to clearly indicate when user input is invalid and guide users to provide the correct input.
+   ![Error handling](/readmeimages/error2.png)
 
 
 ## Deployment
@@ -158,6 +178,10 @@ I manually tested this project by doing the following:
 
 ## Credits and References
 
-- Code Institute for the deployment terminal.
+- Code Institute for the deployment terminal and walk through project.
 - My tutor for sharing various projects which gave me the inspiration to create a personal budget manager.
 - My mentor for helping me clean up my code and helping me to understand better.
+- Various Youtube videos for helping me learn and write the code for this project. Including Programming with Mosh, Shaun Halverson, Tech With Tim and Internet Made Coder.
+- ChatGPT and Perplexity for helpings me breakdown and understand code.
+- W3 Schools for helping me learn and write code.
+
