@@ -129,8 +129,16 @@ The Personal Budget Manager is an application designed to help the user manage t
 ## Testing
 
 I manually tested this project by doing the following:
-- Passed it through the PEP8 linter and confirmed there are no errors.#
-- 
+- Passed it through the PEP8 linter and confirmed there are no major errors.
+- Giving invaild inputs: String when numbers are expected. Trying to remove an expense that doesnt exist.
+- Tested my local terminal and the Code Institute Heroku terminal.
+
+### Bugs
+
+- When I was writing this project I kept having isses with connecting the google sheets but I resolved this by cleaning up my code and making sure all headings and titles were the same so there was no confusion.
+- When validating my code I ran it through [CI Python Linter](https://pep8ci.herokuapp.com/#) this confirmed there was a few errors but I quickly cleaned them up.
+
+
 ## Deployment
 
 ### Local Deployment
@@ -142,8 +150,14 @@ I manually tested this project by doing the following:
 
 ### Heroku Deployment
 
--  (add later)
+1. Fork or clone the repository.
+2. Create a new Heroku app.
+3. Set buildpacks to python and NodeJS in that order.
+4. Link the Heroku app to the repository.
+5. Click on Deploy.
 
 ## Credits and References
 
--  (add later)
+- Code Institute for the deployment terminal.
+- My tutor for sharing various projects which gave me the inspiration to create a personal budget manager.
+- My mentor for helping me clean up my code and helping me to understand better.
