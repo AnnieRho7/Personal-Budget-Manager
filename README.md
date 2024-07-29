@@ -6,7 +6,7 @@ The Personal Budget Manager is an application designed to help the user manage t
 
 ## Live Project
 
-[View live project here](#)
+[View live project here](https://personal-budget-manager9-b331ef6b8de1.herokuapp.com/)
 
 ## Table of Contents
 
@@ -57,27 +57,54 @@ The Personal Budget Manager is an application designed to help the user manage t
 - Users can add new income entries by specifying the amount and category (Salary, Freelance, Misc).
 - The income is then updated in the Google Sheets.
 
+![Add Income](/readmeimages/addincome.png)
+
+![Add Income](/readmeimages/addincome2.png)
+
+![Add Income](/readmeimages/addincomesheet.png)
+
 ### Add Expense
 
 - Users can add new expense entries by specifying the amount and category (Rent/Mortgage, Utilities, Shopping, etc.).
 - The expenses are then updated in the Google Sheets.
+
+![Add Expense](/readmeimages/addexpense.png)
+
+![Add Expense](/readmeimages/addexpense2.png)
+
+![Add Expense](/readmeimages/addexpensesheet.png)
 
 ### Remove Expense
 
 - Users can remove expenses from their list.
 - The Google Sheets are updated accordingly.
 
+![Remove Expense](/readmeimages/removeexpense.png)
+
+![Remove Expense](/readmeimages/removeexpense2.png)
+
+![Remove Expense](/readmeimages/deleteconfirm.png)
+
 ### List Expenses
 
 - Users can view a list of their last 10 expenses.
+
+![Remove Expense](/readmeimages/listexpense.png)
+
+![Remove Expense](/readmeimages/list.png)
 
 ### View Summary
 
 - Users can view a summary of their total income, expenses, and net savings.
 - The summary is updated in the Google Sheets.
 
+![View Summary](/readmeimages/summary.png)
+
+![View Summary](/readmeimages/summary2.png)
+
 ### Future Features
 
+- Adding up expense categories for better tracking.
 - Monthly tracking for better financial management.
 - Budgeting tools to set and track financial goals.
 - Mobile application for on-the-go access.
