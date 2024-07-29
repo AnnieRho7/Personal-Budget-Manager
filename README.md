@@ -78,10 +78,11 @@ The Personal Budget Manager is an application designed to help the user manage t
 
 ### Future Features
 
-- Adding up expense categories for better tracking.
-- Monthly tracking for better financial management.
-- Budgeting tools to set and track financial goals.
-- Mobile application for on-the-go access.
+- Enhanced Expense Tracking: Adding functionality to sum up and analyse expenses by category for improved tracking and budgeting.
+- Monthly Tracking: Implementing features for monthly financial tracking and better financial management over time.
+- Budgeting Tools: Integrating tools to set and monitor financial goals, helping users to budget more effectively.
+- Mobile Application: Developing a mobile app version to provide users with on-the-go access to their financial data.
+- Income Management: Adding functionality to allow users to add and delete income inputs, providing greater flexibility in managing their finances.
 
 ## Technologies Used
 
