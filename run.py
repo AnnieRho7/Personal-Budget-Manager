@@ -41,6 +41,7 @@ CATEGORY_MAPPING_INCOME = {
     "3": "Misc"
 }
 
+
 def load_gspread_client(credentials_file, scope):
     """Loads gspread client with given credentials and scope."""
     try:
@@ -72,6 +73,7 @@ def access_worksheet(sheet, worksheet_name):
         print(f"Error accessing worksheet '{worksheet_name}':", e)
         exit(1)
 
+
 GSPREAD_CLIENT = load_gspread_client('creds.json', SCOPE)
 SHEET = open_spreadsheet(GSPREAD_CLIENT, 'personal-budget-manager')
 INCOME_SHEET = access_worksheet(SHEET, 'income')
@@ -79,6 +81,7 @@ EXPENSES_SHEET = access_worksheet(SHEET, 'expenses')
 SUMMARY_SHEET = access_worksheet(SHEET, 'summary')
 
 expenses = []
+
 
 def load_expenses():
     """Loads the existing expenses from the Google Sheets."""
@@ -105,7 +108,7 @@ def add_income(amount, category):
         if category not in CATEGORY_COLUMN_INCOME:
             print("Invalid category. Please choose from 1, 2, 3\n")
             return
-        # Update the income list 
+        # Update the income list
         update_income_sheet(CATEGORY_COLUMN_INCOME[category], amount)
         print(f"€{amount:.2f} was successfully uploaded to {category}.\n")
 
@@ -120,8 +123,8 @@ def update_income_sheet(column, amount):
     try:
         column_index = column_to_index(column)
         existing_values = INCOME_SHEET.col_values(column_index)
-        row_to_update = len(existing_values) + 1  
-          
+        row_to_update = len(existing_values) + 1
+
         INCOME_SHEET.update_cell(row_to_update, column_index, amount)
         print(f"Income added: €{amount:.2f}")
 
@@ -173,7 +176,7 @@ def column_to_index(column_letter):
 
 def list_expenses():
     """Lists the last 10 expenses."""
-    
+
     print("Last 10 Expenses:")
     for i, expense in enumerate(expenses[-10:], start=1):
         print(f"{i}. {expense['category']} - €{expense['amount']:.2f}")
@@ -181,7 +184,7 @@ def list_expenses():
 
 def remove_expense():
     """Allows the user to remove an expense."""
-    
+
     if not expenses:
         print("No expenses to remove.\n")
         return
@@ -267,7 +270,9 @@ def handle_add_income():
 
 
 def handle_add_expense():
-    """Handle adding expense by prompting user input for amount and category."""
+    """
+    Handle adding expense by prompting user input for amount and category.
+    """
     print("How much was this expense?")
     while True:
         try:
@@ -296,7 +301,7 @@ def handle_add_expense():
 
 def calculate_total_income():
     """Calculate the total income from the income sheet."""
-    
+
     category_columns = ["A", "B", "C"]  # Columns for Salary, Freelance, and Misc
     total_income = 0.0
 
@@ -304,15 +309,16 @@ def calculate_total_income():
         values = INCOME_SHEET.col_values(column_to_index(column))
         for amount in values[1:]:  # Skip the header
             if amount.strip():
-                 # Remove commas from the amount string
+                # Remove commas from the amount string
                 amount = amount.replace(',', '')
                 total_income += float(amount)
 
     return total_income
 
+
 def calculate_total_expenses():
     """Calculate the total expenses from the expense sheet."""
-    
+
     category_columns = ["A", "B", "C", "D", "E", "F", "G", "H"]  # Columns for all expense categories
     total_expenses = 0.0
 
@@ -325,15 +331,16 @@ def calculate_total_expenses():
 
     return total_expenses
 
+
 def calculate_total_net_savings(total_income, total_expenses):
     """Calculates the total net savings."""
-    
+
     return total_income - total_expenses
 
 
 def view_summary():
     """Displays the summary of total income, expenses, and net savings, and updates the summary worksheet."""
-    
+
     try:
         total_income = calculate_total_income()
         total_expenses = calculate_total_expenses()
@@ -344,10 +351,11 @@ def view_summary():
         print(f"Total Net Savings: €{total_net_savings:.2f}\n")
 
         update_summary_sheet(total_income, total_expenses, total_net_savings)
-        
+
     except Exception as e:
         print("Error viewing summary:", e, "\n")
-        
+
+
 def update_summary_sheet(total_income, total_expenses, total_net_savings):
     """Updates the summary worksheet with the total income, total expenses, and total net savings."""
     try:
@@ -361,7 +369,7 @@ def update_summary_sheet(total_income, total_expenses, total_net_savings):
 
 def print_break():
     print("\n" + "-" * 40 + "\n")
-    
+
 
 def print_menu():
     """Displays the menu options to the user."""
