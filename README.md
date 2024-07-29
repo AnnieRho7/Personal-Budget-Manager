@@ -180,8 +180,8 @@ I manually tested this project by doing the following:
 
 - Code Institute for the deployment terminal and walk through project.
 - My tutor for sharing various projects which gave me the inspiration to create a personal budget manager.
-- My mentor for helping me clean up my code and helping me to understand better.
-- Various Youtube videos for helping me learn and write the code for this project. Including Programming with Mosh, Shaun Halverson, Tech With Tim and Internet Made Coder.
-- ChatGPT and Perplexity for helpings me breakdown and understand code.
-- W3 Schools for helping me learn and write code.
+- My mentor for helping me refine my code and deepen my understanding of best practices.
+- Youtube Educators. For their insightful tutorials and guidance on coding practices. Special thanks to Programming with Mosh, Shaun Halverson, Tech With Tim, and Internet Made Coder for their educational content.
+- ChatGPT and Perplexity for their support in breaking down and understanding complex code concepts.
+- W3Schools for their resources and tutorials that facilitated learning and coding throughout this project.
 
