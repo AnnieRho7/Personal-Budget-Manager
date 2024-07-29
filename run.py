@@ -4,7 +4,7 @@ from google.oauth2.service_account import Credentials
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive",
 ]
 
 CATEGORY_COLUMN_EXPENSES = {
@@ -15,14 +15,10 @@ CATEGORY_COLUMN_EXPENSES = {
     "Insurance": "E",
     "Entertainment": "F",
     "Savings": "G",
-    "Miscellaneous": "H"
+    "Miscellaneous": "H",
 }
 
-CATEGORY_COLUMN_INCOME = {
-    "Salary": "A",
-    "Freelance": "B",
-    "Misc": "C"
-}
+CATEGORY_COLUMN_INCOME = {"Salary": "A", "Freelance": "B", "Misc": "C"}
 
 CATEGORY_MAPPING_EXPENSES = {
     "1": "Rent/Mortgage",
@@ -32,14 +28,10 @@ CATEGORY_MAPPING_EXPENSES = {
     "5": "Insurance",
     "6": "Entertainment",
     "7": "Savings",
-    "8": "Miscellaneous"
+    "8": "Miscellaneous",
 }
 
-CATEGORY_MAPPING_INCOME = {
-    "1": "Salary",
-    "2": "Freelance",
-    "3": "Misc"
-}
+CATEGORY_MAPPING_INCOME = {"1": "Salary", "2": "Freelance", "3": "Misc"}
 
 
 def load_gspread_client(credentials_file, scope):
@@ -74,11 +66,11 @@ def access_worksheet(sheet, worksheet_name):
         exit(1)
 
 
-GSPREAD_CLIENT = load_gspread_client('creds.json', SCOPE)
-SHEET = open_spreadsheet(GSPREAD_CLIENT, 'personal-budget-manager')
-INCOME_SHEET = access_worksheet(SHEET, 'income')
-EXPENSES_SHEET = access_worksheet(SHEET, 'expenses')
-SUMMARY_SHEET = access_worksheet(SHEET, 'summary')
+GSPREAD_CLIENT = load_gspread_client("creds.json", SCOPE)
+SHEET = open_spreadsheet(GSPREAD_CLIENT, "personal-budget-manager")
+INCOME_SHEET = access_worksheet(SHEET, "income")
+EXPENSES_SHEET = access_worksheet(SHEET, "expenses")
+SUMMARY_SHEET = access_worksheet(SHEET, "summary")
 
 expenses = []
 
@@ -94,7 +86,8 @@ def load_expenses():
 
             for amount in values[1:]:  # Skip the header
                 if amount.strip():
-                    expenses.append({'amount': float(amount), 'category': category})
+                    expenses.append({"amount": float(amount),
+                                    "category": category})
 
     except Exception as e:
         print("Error loading expenses:", e)
@@ -171,7 +164,7 @@ def column_to_index(column_letter):
     """
     Converts column letter (e.g., 'A') to its numeric index (1).
     """
-    return ord(column_letter.upper()) - ord('A') + 1
+    return ord(column_letter.upper()) - ord("A") + 1
 
 
 def list_expenses():
@@ -204,8 +197,10 @@ def remove_expense():
     # Confirm deletion
     selected_expense = expenses[selection - 1]
     while True:
-        confirmation = input(f"Remove {selected_expense['category']} - €{selected_expense['amount']:.2f}? (y/n): ").lower()
-        if confirmation == 'y':
+        confirmation = input(
+            f"Remove {selected_expense['category']} - €{selected_expense['amount']:.2f}? (y/n): "
+        ).lower()
+        if confirmation == "y":
             try:
                 expenses.pop(selection - 1)
                 update_expenses_sheet()
@@ -213,7 +208,7 @@ def remove_expense():
             except Exception as e:
                 print("Error removing expense:", e)
             break
-        elif confirmation == 'n':
+        elif confirmation == "n":
             print("Operation canceled.\n")
             break
         else:
@@ -230,12 +225,14 @@ def update_expenses_sheet():
         EXPENSES_SHEET.insert_row(headers, 1)
 
         for expense in expenses:
-            category_name = expense['category']
+            category_name = expense["category"]
             column = category_column[category_name]
             column_index = column_to_index(column)
             existing_values = EXPENSES_SHEET.col_values(column_index)
             row_to_update = len(existing_values) + 1
-            EXPENSES_SHEET.update_cell(row_to_update, column_index, expense.get('amount'))
+            EXPENSES_SHEET.update_cell(
+                row_to_update, column_index, expense.get("amount")
+            )
     except Exception as e:
         print("Error updating expenses sheet:", e)
 
@@ -310,7 +307,7 @@ def calculate_total_income():
         for amount in values[1:]:  # Skip the header
             if amount.strip():
                 # Remove commas from the amount string
-                amount = amount.replace(',', '')
+                amount = amount.replace(",", "")
                 total_income += float(amount)
 
     return total_income
@@ -319,14 +316,23 @@ def calculate_total_income():
 def calculate_total_expenses():
     """Calculate the total expenses from the expense sheet."""
 
-    category_columns = ["A", "B", "C", "D", "E", "F", "G", "H"]  # Columns for all expense categories
+    category_columns = [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+    ]  # Columns for all expense categories
     total_expenses = 0.0
 
     for column in category_columns:
         values = EXPENSES_SHEET.col_values(column_to_index(column))
         for amount in values[1:]:  # Skip the header
             if amount.strip():
-                amount = amount.replace(',', '')
+                amount = amount.replace(",", "")
                 total_expenses += float(amount)
 
     return total_expenses
@@ -339,7 +345,10 @@ def calculate_total_net_savings(total_income, total_expenses):
 
 
 def view_summary():
-    """Displays the summary of total income, expenses, and net savings, and updates the summary worksheet."""
+    """
+    Displays the summary of total income,
+    expenses, and net savings, and updates the summary worksheet.
+    """
 
     try:
         total_income = calculate_total_income()
@@ -357,9 +366,12 @@ def view_summary():
 
 
 def update_summary_sheet(total_income, total_expenses, total_net_savings):
-    """Updates the summary worksheet with the total income, total expenses, and total net savings."""
+    """
+    Updates the summary worksheet with the total income,
+    total expenses, and total net savings.
+    """
     try:
-        cell_range = 'A2:C2'
+        cell_range = "A2:C2"
         values = [[total_income, total_expenses, total_net_savings]]
 
         SUMMARY_SHEET.update(values, cell_range)
@@ -374,13 +386,13 @@ def print_break():
 def print_menu():
     """Displays the menu options to the user."""
 
-    print('Please choose from one of the following options (1-6)... ')
-    print('1. Add Income')
-    print('2. Add Expense')
-    print('3. Remove Expense')
-    print('4. List expenses')
-    print('5. View Summary')
-    print('6. Exit')
+    print("Please choose from one of the following options (1-6)... ")
+    print("1. Add Income")
+    print("2. Add Expense")
+    print("3. Remove Expense")
+    print("4. List expenses")
+    print("5. View Summary")
+    print("6. Exit")
 
 
 if __name__ == "__main__":
@@ -388,18 +400,18 @@ if __name__ == "__main__":
     while True:
         # Prompt the user
         print_menu()
-        optionSelected = input('> ')
-        if optionSelected == '1':
+        optionSelected = input("> ")
+        if optionSelected == "1":
             handle_add_income()
-        elif optionSelected == '2':
+        elif optionSelected == "2":
             handle_add_expense()
-        elif optionSelected == '3':
+        elif optionSelected == "3":
             remove_expense()
-        elif optionSelected == '4':
+        elif optionSelected == "4":
             list_expenses()
-        elif optionSelected == '5':
+        elif optionSelected == "5":
             view_summary()
-        elif optionSelected == '6':
+        elif optionSelected == "6":
             print("You have exited the program.")
             break
 

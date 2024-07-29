@@ -128,22 +128,9 @@ The Personal Budget Manager is an application designed to help the user manage t
 
 ## Testing
 
-### Unit Testing
-
--  (add later)
-
-### Integration Testing
-
-- (add later)
-
-### User Acceptance Testing
-
-- (add later)
-
-### Resolved Bugs
-
--  (add later)
-
+I manually tested this project by doing the following:
+- Passed it through the PEP8 linter and confirmed there are no errors.#
+- 
 ## Deployment
 
 ### Local Deployment
